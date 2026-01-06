@@ -175,6 +175,7 @@ local function is_valid_buffer(bufnr)
 		local excluded_filetypes = {
 			"snacks_dashboard",
 			"snacks_notif",
+			"SNACKS_PICKER_LIST",
 			"snacks_terminal",
 			"snacks_win",
 			"snacks_picker",
