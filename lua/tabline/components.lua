@@ -157,6 +157,49 @@ local function is_valid_buffer(bufnr)
 		return false
 	end
 
+	-- Exclude special buffer types (explorer, terminal, etc.)
+	local ok_buftype, buftype = pcall(function()
+		return vim.bo[bufnr].buftype
+	end)
+	if ok_buftype and buftype ~= "" then
+		-- Exclude nofile, terminal, prompt, quickfix, help, etc.
+		return false
+	end
+
+	-- Exclude special filetypes (explorers, dashboards, etc.)
+	local ok_filetype, filetype = pcall(function()
+		return vim.bo[bufnr].filetype
+	end)
+	if ok_filetype and filetype ~= "" then
+		-- Common explorer and special buffer filetypes
+		local excluded_filetypes = {
+			"snacks_dashboard",
+			"snacks_notif",
+			"snacks_terminal",
+			"snacks_win",
+			"snacks_picker",
+			"snacks_input",
+			"NvimTree",
+			"neo-tree",
+			"neo-tree-popup",
+			"dashboard",
+			"alpha",
+			"starter",
+			"Trouble",
+			"lazy",
+			"mason",
+			"help",
+			"qf",
+			"terminal",
+		}
+
+		for _, ft in ipairs(excluded_filetypes) do
+			if filetype == ft or filetype:match("^" .. ft) then
+				return false
+			end
+		end
+	end
+
 	if state.config.hide_misc then
 		local ok_name, name = pcall(api.nvim_buf_get_name, bufnr)
 		if not ok_name or not name then
